@@ -4,7 +4,7 @@ export type contents = {
 }
 
 export type product = {
-	id: number
+	_id: number
 	category: string
 	src: string
 	topSrc: string

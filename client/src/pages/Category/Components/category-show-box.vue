@@ -11,10 +11,11 @@ const cartStore = useCartStore()
 const props = defineProps<{
 	category: string
 	item: product
+	index: number
 }>()
 
 const flip = computed(() => {
-	return props.item.id % 2 === 0 ? false : true
+	return props.index % 2 === 0 ? false : true
 })
 
 let show = ref(false)
@@ -53,26 +54,26 @@ onMounted(() => {
 				class="flex flex-row items-center justify-center gap-4 md:justify-normal"
 			>
 				<ButtonSolid
-					:to="{ name: props.category, params: { id: props.item.id } }"
+					:to="{ name: props.category, params: { id: props.item?._id } }"
 					color="light"
 					add="font-bold"
 				/>
 				<ButtonQuickAdd
 					v-if="cartStore.showQuickAdd"
 					@add-to-cart="cartStore.addToCart(props.item)"
-					:data-test="`quick-add-${props.item.category}-${props.item.id}`"
+					:data-test="`quick-add-${props.item.category}-${props.item?._id}`"
 				/>
 			</div>
 		</div>
 		<router-link
-			:to="{ name: props.category, params: { id: props.item.id } }"
+			:to="{ name: props.category, params: { id: props.item._id } }"
 			class="order-first col-span-1 cursor-pointer overflow-hidden rounded active:translate-y-1 md:-order-none"
 			:class="flip === true ? 'col-start-2' : 'col-start-1'"
 		>
 			<img
 				loading="lazy"
 				class="relative aspect-square w-full object-cover"
-				:src="props.item.src"
+				:src="props.item.src || '/products/keyboards/pulsar-show.webp'"
 				alt=""
 			/>
 		</router-link>

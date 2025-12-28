@@ -1,11 +1,27 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
 
+export enum ProductCategory {
+  KEYBOARDS = 'keyboards',
+  KEYCAPS = 'keycaps',
+  DESKMATS = 'deskmats',
+}
+
+@Schema({ _id: false })
+export class InTheBoxItem {
+  @Prop({ required: true, min: 1 })
+  count: number;
+
+  @Prop({ required: true })
+  content: string;
+}
+
+export const InTheBoxItemSchema = SchemaFactory.createForClass(InTheBoxItem);
+
 export type ProductDocument = HydratedDocument<Product>;
 
 @Schema({ timestamps: true })
 export class Product {
-  // Images
   @Prop({ required: true })
   src: string;
 
@@ -18,11 +34,11 @@ export class Product {
   @Prop()
   rightSrc?: string;
 
-  // Status
+  /* ---------- Status ---------- */
   @Prop({ default: false })
-  nu: boolean; // new product
+  isNew: boolean;
 
-  // Content
+  /* ---------- Content ---------- */
   @Prop({ required: true })
   header: string;
 
@@ -32,31 +48,24 @@ export class Product {
   @Prop({ required: true })
   text: string;
 
-  @Prop({ type: String })
-  features: string;
+  @Prop({ type: [String], default: [] })
+  features: string[];
 
   @Prop({
-    type: [
-      {
-        count: { type: Number, required: true },
-        content: { type: String, required: true },
-      },
-    ],
+    type: [InTheBoxItemSchema],
     default: [],
   })
-  inthebox: {
-    count: number;
-    content: string;
-  }[];
+  inthebox: InTheBoxItem[];
 
+  /* ---------- Pricing ---------- */
   @Prop({ required: true, min: 0 })
   price: number;
 
   @Prop({
     required: true,
-    enum: ['keyboards', 'keycaps', 'deskmats'],
+    enum: Object.values(ProductCategory),
   })
-  category: 'keyboards' | 'keycaps' | 'deskmats';
+  category: ProductCategory;
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
   createdBy: mongoose.Types.ObjectId;
@@ -67,13 +76,7 @@ export class Product {
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
   deletedBy: mongoose.Types.ObjectId;
 
-  @Prop()
-  createdAt: Date;
-
-  @Prop()
-  updatedAt: Date;
-
-  @Prop()
+  @Prop({ default: false })
   isDeleted: boolean;
 
   @Prop()

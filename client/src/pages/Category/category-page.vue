@@ -4,14 +4,42 @@ import CategoryBoxes from '../../components/Category-Box/category-box-container.
 import Info from '../../components/info-section.vue'
 import Footer from '../../components/footer-global.vue'
 import Showbox from './Components/category-show-box.vue'
-import { getProductsOfType } from '../../data/product-utils.ts'
-import { computed } from 'vue'
+import { onMounted, ref, watch } from 'vue'
+import { getProducts } from '../../apis/product.ts'
 
 const props = defineProps<{
 	category: string
 }>()
 
-const products = computed(() => getProductsOfType(props.category))
+const products = ref<any[]>([])
+const loading = ref(false)
+
+const fetchProducts = async () => {
+	try {
+		loading.value = true
+		const res = await getProducts(props.category)
+		console.log('res--------------', res)
+
+		console.log('res.data.data.data-----------------', res.data.data.data)
+
+		products.value = res.data.data.data
+	} finally {
+		loading.value = false
+	}
+}
+
+onMounted(async () => {
+	fetchProducts()
+})
+
+watch(
+	() => props.category,
+	(newCategory, oldCategory) => {
+		if (newCategory !== oldCategory) {
+			fetchProducts()
+		}
+	},
+)
 </script>
 
 <template>
@@ -34,8 +62,9 @@ const products = computed(() => getProductsOfType(props.category))
 			v-for="(product, index) in products"
 			:item="product"
 			:category="props.category"
-			:data-test="`showbox-${product.category}-${product.id}`"
+			:data-test="`showbox-${product.category}-${product._id}`"
 			:key="index"
+			:index="index"
 		/>
 		<CategoryBoxes />
 		<Info />
