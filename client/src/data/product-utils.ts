@@ -17,7 +17,7 @@ export function getSelection(
 
 	for (const value of Object.values(products)) {
 		for (const item of value) {
-			if (item.id === productId && item.category === productCategory) {
+			if (item._id === productId && item.category === productCategory) {
 				continue
 			} else {
 				items.push(item)
@@ -37,5 +37,5 @@ export function getProductsOfType(category: string): product[] {
 }
 
 export function getProduct(category: string, id: number): product | null {
-	return products[category].find((item) => item.id == id) || null
+	return products[category].find((item) => item._id == id) || null
 }

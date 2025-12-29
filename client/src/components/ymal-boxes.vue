@@ -1,18 +1,29 @@
 <script setup lang="ts">
-import { product } from '../data/product-types.ts'
-import { getSelection } from '../data/product-utils.ts'
-import { onBeforeMount } from 'vue'
+import { onMounted, ref } from 'vue'
 import ButtonSolid from '../components/Buttons/button-solid.vue'
+import { getProductRandom } from '../apis/product.ts'
 
 const props = defineProps<{
 	productCategory: string
 	productId: number
 }>()
 
-let items: product[] = []
+const products: any = ref<any[]>([])
+const loading = ref(false)
 
-onBeforeMount(() => {
-	items = getSelection(props.productCategory, props.productId)
+const fetchProducts = async () => {
+	try {
+		loading.value = true
+		const res = await getProductRandom()
+
+		products.value = res ?? []
+	} finally {
+		loading.value = false
+	}
+}
+
+onMounted(async () => {
+	fetchProducts()
 })
 </script>
 
@@ -26,11 +37,11 @@ onBeforeMount(() => {
 		>
 			<div
 				class="flex flex-col items-center justify-between gap-8 lg:gap-10"
-				v-for="(item, index) in items"
+				v-for="(item, index) in products"
 				:key="index"
 			>
 				<router-link
-					:to="{ name: item.category, params: { id: item.id } }"
+					:to="{ name: item.category, params: { id: item._id } }"
 					class="overflow-hidden rounded"
 				>
 					<img class="object-center" :src="item.src" alt="" loading="lazy" />
@@ -40,7 +51,7 @@ onBeforeMount(() => {
 					<span class="capitalize"> {{ item.subheader }}</span>
 				</h3>
 				<ButtonSolid
-					:to="{ name: item.category, params: { id: item.id } }"
+					:to="{ name: item.category, params: { id: item._id } }"
 					color="light"
 					content="see product"
 					size="small"

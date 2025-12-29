@@ -35,9 +35,15 @@ export class ProductsController {
     );
   }
 
+  @Get('/random')
+  @ResponseMessage('Fetch List Products')
+  findRamdom() {
+    return this.productsService.findRandom();
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.productsService.findOne(+id);
+    return this.productsService.findOne(id);
   }
 
   @Patch(':id')

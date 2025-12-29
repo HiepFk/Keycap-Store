@@ -10,3 +10,5 @@ export const getProductById = (id: string) => api.get(`/products/${id}`)
 export const updateProduct = (id: string, data: any) =>
 	api.put(`/products/${id}`, data)
 export const deleteProduct = (id: string) => api.delete(`/products/${id}`)
+
+export const getProductRandom = () => api.get(`/products/random`)

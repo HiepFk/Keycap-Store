@@ -7,30 +7,24 @@ import Info from '../../components/info-section.vue'
 import Footer from '../../components/footer-global.vue'
 import Features from './Components/product-features.vue'
 
-import { getProduct } from '../../data/product-utils.ts'
-import { computed } from 'vue'
-
 const props = defineProps<{
 	category: string
-	productId: number
+	productId: string
+	product: any
 }>()
-
-let item = computed(() => {
-	return getProduct(props.category, props.productId)
-})
 </script>
 
 <template>
 	<main class="flex h-full w-screen flex-col items-center bg-white">
 		<Navigation color="black" />
-		<Core :item="item!" />
-		<Features :features="item!.features" :inthebox="item!.inthebox" />
+		<Core :item="product!" />
+		<Features :features="product!.features" :inthebox="product!.inthebox" />
 		<Grid
-			:topSrc="item!.topSrc"
-			:botSrc="item!.botSrc"
-			:rightSrc="item!.rightSrc"
+			:topSrc="product!.topSrc"
+			:botSrc="product!.botSrc"
+			:rightSrc="product!.rightSrc"
 		/>
-		<Ymal :productCategory="category" :productId="productId" />
+		<Ymal :productCategory="category" :productId="1" />
 		<Info />
 		<Footer />
 	</main>

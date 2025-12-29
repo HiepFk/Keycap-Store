@@ -3,6 +3,7 @@ import { useSeoMeta } from '@unhead/vue'
 import { getProduct } from '../data/product-utils.ts'
 import { meta } from '../data/meta-types'
 import { getCategoryPageMeta, getProductPageMeta } from '../data/meta-utils'
+import { getProductById } from '../apis/product.ts'
 
 function parseRouteId(id: string | string[]): number {
 	if (Array.isArray(id)) return parseInt(id[0])
@@ -43,29 +44,39 @@ export function productRoute(category: string) {
 		path: `/${category}/:id`,
 		name: category,
 		component: () => import('../pages/Product/product-page.vue'),
-		// eslint-disable-next-line
-		props: (route: any) => ({
-			category: category,
-			productId: parseInt(route.params.id),
+
+		props: (route: RouteLocationNormalized) => ({
+			category,
+			productId: Number(route.params.id),
+			product: route.meta.product, // 👈 truyền thẳng product
 		}),
-		beforeEnter: (
+
+		beforeEnter: async (
 			to: RouteLocationNormalized,
 			_: RouteLocationNormalized,
 			next: NavigationGuardNext,
 		) => {
-			const product = getProduct(category, parseRouteId(to.params.id))
-			if (!product) {
-				next('/404')
-			} else {
-				const meta = getProductPageMeta(product)
+			try {
+				const product: any = await getProductById(to.params.id as string)
+
+				if (!product) {
+					next('/404')
+					return
+				}
+
+				to.meta.product = product
+
 				useSeoMeta({
-					title: meta.title,
-					description: meta.description,
-					ogTitle: meta.title,
-					ogDescription: meta.description,
-					ogImage: meta.image,
+					title: product.title,
+					description: product.description,
+					ogTitle: product.title,
+					ogDescription: product.description,
+					ogImage: product.image,
 				})
+
 				next()
+			} catch (e) {
+				next('/404')
 			}
 		},
 	}

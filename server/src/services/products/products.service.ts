@@ -3,7 +3,7 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Product, ProductDocument } from './schemas/product.schemas';
-import { Model, SortOrder } from 'mongoose';
+import mongoose, { Model, SortOrder } from 'mongoose';
 import aqp from 'api-query-params';
 
 @Injectable()
@@ -72,8 +72,22 @@ export class ProductsService {
     };
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} product`;
+  async findRandom(limit = 3) {
+    return this.productsModel.aggregate([
+      {
+        $match: {
+          isDeleted: { $ne: true },
+        },
+      },
+      {
+        $sample: { size: limit },
+      },
+    ]);
+  }
+
+  async findOne(id: string) {
+    if (!mongoose.Types.ObjectId.isValid(id)) return 'not found';
+    return await this.productsModel.findById(id);
   }
 
   update(id: number, updateDto: UpdateProductDto) {

@@ -18,11 +18,7 @@ const fetchProducts = async () => {
 	try {
 		loading.value = true
 		const res = await getProducts(props.category)
-		console.log('res--------------', res)
-
-		console.log('res.data.data.data-----------------', res.data.data.data)
-
-		products.value = res.data.data.data
+		products.value = res.data
 	} finally {
 		loading.value = false
 	}
