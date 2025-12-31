@@ -30,22 +30,19 @@
 	opacity: 0;
 }
 
-/* width */
 ::-webkit-scrollbar {
-	width: 0.3rem;
+	width: 0.4rem;
+	height: 0rem;
 }
 
-/* Track */
 ::-webkit-scrollbar-track {
 	background: white;
 }
 
-/* Handle */
 ::-webkit-scrollbar-thumb {
 	background: #888;
 }
 
-/* Handle on hover */
 ::-webkit-scrollbar-thumb:hover {
 	background: transparent;
 }
