@@ -82,3 +82,8 @@
 	width: 32rem;
 	height: 32rem;
 }
+
+button {
+	outline: none !important;
+	border-color: transparent !important;
+}

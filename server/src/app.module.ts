@@ -11,6 +11,7 @@ import { RolesModule } from './services/roles/roles.module';
 import { AuthModule } from './services/auth/auth.module';
 import { PermissionsModule } from './services/permissions/permissions.module';
 import { ProductsModule } from './services/products/products.module';
+import { OrdersModule } from './services/orders/orders.module';
 
 @Module({
   imports: [
@@ -54,6 +55,7 @@ import { ProductsModule } from './services/products/products.module';
     RolesModule,
     PermissionsModule,
     ProductsModule,
+    OrdersModule,
   ],
   controllers: [AppController],
   providers: [AppService],

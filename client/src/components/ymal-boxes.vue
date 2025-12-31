@@ -36,20 +36,28 @@ onMounted(async () => {
 			class="flex flex-col items-center gap-12 lg:grid lg:grid-cols-3 lg:grid-rows-1 lg:gap-6"
 		>
 			<div
-				class="flex flex-col items-center justify-between gap-8 lg:gap-10"
+				class="flex h-full flex-col items-center justify-between gap-8 lg:gap-10"
 				v-for="(item, index) in products"
 				:key="index"
 			>
 				<router-link
 					:to="{ name: item.category, params: { id: item._id } }"
-					class="overflow-hidden rounded"
+					class="overflow-hidden rounded shadow-[rgba(0,0,0,0.05)_0px_6px_24px_0px,_rgba(0,0,0,0.08)_0px_0px_0px_1px]"
 				>
-					<img class="object-center" :src="item.src" alt="" loading="lazy" />
+					<img
+						class="h-[20rem] object-center"
+						:src="item.src"
+						alt=""
+						loading="lazy"
+					/>
 				</router-link>
-				<h3 class="text-center font-Manrope text-2xl font-semibold text-black">
+				<h3
+					class="flex-1 text-center font-Manrope text-2xl font-semibold text-black"
+				>
 					{{ item.header }} <br class="hidden lg:inline" />
-					<span class="capitalize"> {{ item.subheader }}</span>
+					<span class="capitalize">{{ item.subheader }}</span>
 				</h3>
+
 				<ButtonSolid
 					:to="{ name: item.category, params: { id: item._id } }"
 					color="light"
