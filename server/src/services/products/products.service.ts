@@ -25,7 +25,7 @@ export class ProductsService {
     const { filter, sort, projection, population } = aqp(query);
 
     const page = currentPage > 0 ? currentPage : 1;
-    const pageSize = limit > 0 ? limit : 10;
+    const pageSize = 200;
     const skip = (page - 1) * pageSize;
 
     const mongoFilter: any = { ...filter };

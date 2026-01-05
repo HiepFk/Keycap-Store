@@ -72,24 +72,32 @@ const accessToken = getAccessToken()
 					to="/"
 					class="uppercase text-white transition duration-300 hover:text-k-main active:translate-y-0.5"
 					data-test="nav-home"
+					active-class="nav-link-active"
+					exact-active-class="nav-link-active"
 					>Home
 				</router-link>
 				<router-link
 					to="/keyboards"
 					class="uppercase text-white transition duration-300 hover:text-k-main active:translate-y-0.5"
 					data-test="nav-keyboards"
+					active-class="nav-link-active"
+					exact-active-class="nav-link-active"
 					>Keyboards
 				</router-link>
 				<router-link
 					to="/keycaps"
 					class="uppercase text-white transition duration-300 hover:text-k-main active:translate-y-0.5"
 					data-test="nav-keycaps"
+					active-class="nav-link-active"
+					exact-active-class="nav-link-active"
 					>Keycaps
 				</router-link>
 				<router-link
 					to="/deskmats"
 					class="uppercase text-white transition duration-300 hover:text-k-main active:translate-y-0.5"
 					data-test="nav-deskmats"
+					active-class="nav-link-active"
+					exact-active-class="nav-link-active"
 					>Deskmats
 				</router-link>
 			</nav>
@@ -119,6 +127,8 @@ const accessToken = getAccessToken()
 					to="/profile"
 					class="uppercase text-white transition duration-300 hover:text-k-main active:translate-y-0.5"
 					data-test="nav-deskmats"
+					active-class="nav-link-active"
+					exact-active-class="nav-link-active"
 				>
 					<img
 						class="h-full hover:opacity-50 active:translate-y-0.5"
@@ -132,6 +142,8 @@ const accessToken = getAccessToken()
 					to="/login"
 					class="uppercase text-white transition duration-300 hover:text-k-main active:translate-y-0.5"
 					data-test="nav-deskmats"
+					active-class="nav-link-active"
+					exact-active-class="nav-link-active"
 				>
 					Login
 				</router-link>
@@ -158,6 +170,8 @@ const accessToken = getAccessToken()
 					:class="$route.path === '/' && 'hidden'"
 					@click="handleHamburger()"
 					data-test="mobile-nav-home"
+					active-class="nav-link-active"
+					exact-active-class="nav-link-active"
 					>Home
 				</router-link>
 				<router-link
@@ -166,6 +180,8 @@ const accessToken = getAccessToken()
 					:class="$route.path === '/keyboards' && 'hidden'"
 					@click="handleHamburger()"
 					data-test="mobile-nav-keyboards"
+					active-class="nav-link-active"
+					exact-active-class="nav-link-active"
 					>Keyboards
 				</router-link>
 				<router-link
@@ -174,6 +190,8 @@ const accessToken = getAccessToken()
 					:class="$route.path === '/keycaps' && 'hidden'"
 					@click="handleHamburger()"
 					data-test="mobile-nav-keycaps"
+					active-class="nav-link-active"
+					exact-active-class="nav-link-active"
 					>Keycaps
 				</router-link>
 				<router-link
@@ -182,9 +200,21 @@ const accessToken = getAccessToken()
 					:class="$route.path === '/deskmats' && 'hidden'"
 					@click="handleHamburger()"
 					data-test="mobile-nav-deskmats"
+					active-class="nav-link-active"
+					exact-active-class="nav-link-active"
 					>Deskmats
 				</router-link>
 			</nav>
 		</transition>
 	</header>
 </template>
+
+<style scoped>
+.nav-link {
+	@apply text-black transition duration-300 hover:text-k-main active:translate-y-0.5;
+}
+
+.nav-link-active {
+	@apply text-k-main;
+}
+</style>

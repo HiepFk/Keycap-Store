@@ -15,12 +15,19 @@ import AdressDetail from '../pages/Profile/components/info-form.vue'
 import OrderList from '../pages/Profile/components/info-form.vue'
 import OrderDetail from '../pages/Profile/components/info-form.vue'
 
+import LoginPage from '../pages/Login/login-page.vue'
+
 const routes = [
 	{
 		path: '/',
 		name: 'Home',
 		component: LandingPage,
 		beforeEnter: () => handleRouteMeta(getLandingPageMeta),
+	},
+	{
+		path: '/login',
+		name: 'Login',
+		component: LoginPage,
 	},
 
 	{
