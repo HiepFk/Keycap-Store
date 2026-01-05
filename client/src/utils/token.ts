@@ -1,12 +1,20 @@
-export const getAccessToken = () => localStorage.getItem('access_token')
-export const getRefreshToken = () => localStorage.getItem('refresh_token')
+import { useStorage } from '@vueuse/core'
 
+const accessToken = useStorage<string | null>('access_token', null)
+const refreshToken = useStorage<string | null>('refresh_token', null)
+
+// GET
+export const getAccessToken = () => accessToken.value
+export const getRefreshToken = () => refreshToken.value
+
+// SET
 export const setTokens = (access: string, refresh: string) => {
-	localStorage.setItem('access_token', access)
-	localStorage.setItem('refresh_token', refresh)
+	accessToken.value = access
+	refreshToken.value = refresh
 }
 
+// CLEAR (chuẩn)
 export const clearTokens = () => {
-	localStorage.removeItem('access_token')
-	localStorage.removeItem('refresh_token')
+	accessToken.value = null
+	refreshToken.value = null
 }

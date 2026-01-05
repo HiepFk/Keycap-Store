@@ -31,7 +31,7 @@ export const useCartStore = defineStore('cart', {
 		},
 
 		addToCart(item: product) {
-			const itemKey = item.category + item.id + ''
+			const itemKey = item.category + item._id + ''
 			if (itemKey in this.cart) {
 				this.cart[itemKey].amount = this.cart[itemKey].amount + 1
 			} else {
@@ -60,7 +60,7 @@ export const useCartStore = defineStore('cart', {
 			})
 		},
 		removeFromCart(item: product) {
-			const itemKey = item.category + item.id + ''
+			const itemKey = item.category + item._id + ''
 			if (itemKey in this.cart) {
 				if (this.cart[itemKey].amount > 1) {
 					this.cart[itemKey].amount = this.cart[itemKey].amount - 1

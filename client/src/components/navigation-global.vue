@@ -3,6 +3,7 @@ import cartIcon from '/icons/cart-icon.svg'
 import Cart from './Cart/cart-modal.vue'
 import { computed, ref } from 'vue'
 import { useCartStore } from '../pinia/cartStore.ts'
+import { getAccessToken } from '../utils/token.ts'
 
 interface Props {
 	color?: 'black' | 'transparent' | 'k-black'
@@ -23,6 +24,8 @@ const hamburgerState = ref('hide')
 function handleHamburger(): void {
 	hamburgerState.value = hamburgerState.value === 'hide' ? 'show' : 'hide'
 }
+
+const accessToken = getAccessToken()
 </script>
 
 <template>
@@ -90,25 +93,48 @@ function handleHamburger(): void {
 					>Deskmats
 				</router-link>
 			</nav>
-			<div
-				class="relative h-5 cursor-pointer"
-				@click="cartStore.cartOn()"
-				data-test="cart-button"
-			>
-				<img
-					class="h-full hover:opacity-50 active:translate-y-0.5"
-					:src="cartIcon"
-					alt=""
-				/>
-				<Transition>
-					<div
-						v-show="cartStore.cartLength !== 0"
-						class="absolute -right-2 top-3 flex h-4 w-4 flex-col items-center justify-center rounded-full bg-red-600 text-xs font-black transition-all duration-300"
-						data-test="cart-bubble"
-					>
-						{{ cartStore.cartLength }}
-					</div>
-				</Transition>
+			<div class="flex items-center gap-8">
+				<div
+					class="relative h-5 cursor-pointer"
+					@click="cartStore.cartOn()"
+					data-test="cart-button"
+				>
+					<img
+						class="h-full hover:opacity-50 active:translate-y-0.5"
+						:src="cartIcon"
+						alt=""
+					/>
+					<Transition>
+						<div
+							v-show="cartStore.cartLength !== 0"
+							class="absolute -right-2 top-3 flex h-4 w-4 flex-col items-center justify-center rounded-full bg-red-600 text-xs font-black transition-all duration-300"
+							data-test="cart-bubble"
+						>
+							{{ cartStore.cartLength }}
+						</div>
+					</Transition>
+				</div>
+				<router-link
+					v-if="accessToken"
+					to="/profile"
+					class="uppercase text-white transition duration-300 hover:text-k-main active:translate-y-0.5"
+					data-test="nav-deskmats"
+				>
+					<img
+						class="h-full hover:opacity-50 active:translate-y-0.5"
+						:src="cartIcon"
+						alt=""
+					/>
+				</router-link>
+
+				<router-link
+					v-else
+					to="/login"
+					class="uppercase text-white transition duration-300 hover:text-k-main active:translate-y-0.5"
+					data-test="nav-deskmats"
+				>
+					Login
+				</router-link>
 			</div>
 		</div>
 		<Cart v-show="cartStore.showCart" />

@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { useCartStore } from './cartStore'
-const cartStore = useCartStore()
+// const cartStore = useCartStore()
 
 export const useFormStore = defineStore('form', {
 	state: () => ({
@@ -32,10 +32,10 @@ export const useFormStore = defineStore('form', {
 			this.payment = 'electonic'
 		},
 		submit() {
-			if (cartStore.cartLength === 0) {
-				alert('Shopping cart is empty!')
-				return
-			}
+			// if (cartStore.cartLength === 0) {
+			// 	alert('Shopping cart is empty!')
+			// 	return
+			// }
 
 			const allSet =
 				this.isValidName === 'true' &&

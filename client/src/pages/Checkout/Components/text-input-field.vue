@@ -4,7 +4,7 @@ const formStore = useFormStore()
 
 const props = defineProps<{
 	type: 'email' | 'number' | 'password' | 'search' | 'tel' | 'text' | 'url'
-	validator: 'empty' | 'true' | 'false'
+	validator?: 'empty' | 'true' | 'false'
 
 	// as in html id tag - must correspond to data name in formStore storage
 	id: string
@@ -16,7 +16,7 @@ const props = defineProps<{
 	maxLength?: string
 	autocomplete?: 'off'
 	required?: boolean
-	errorMessage: string
+	errorMessage?: string
 }>()
 </script>
 <template>
