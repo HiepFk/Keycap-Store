@@ -10,10 +10,10 @@ import {
 
 // profile children
 import InfoForm from '../pages/Profile/components/info-form.vue'
-import AdressList from '../pages/Profile/components/info-form.vue'
-import AdressDetail from '../pages/Profile/components/info-form.vue'
-import OrderList from '../pages/Profile/components/info-form.vue'
-import OrderDetail from '../pages/Profile/components/info-form.vue'
+import AdressList from '../pages/Profile/components/address-list.vue'
+import AdressDetail from '../pages/Profile/components/address.vue'
+import OrderList from '../pages/Profile/components/order-list.vue'
+import OrderDetail from '../pages/Profile/components/order.vue'
 
 import LoginPage from '../pages/Login/login-page.vue'
 

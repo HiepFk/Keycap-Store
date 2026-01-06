@@ -1,10 +1,17 @@
 <script lang="ts" setup>
+import { computed } from 'vue'
 import NavigationGlobal from '../../components/navigation-global.vue'
-import { useInfoStore } from '../../pinia/infoStore'
+import { useAuthStore } from '../../pinia/useAuthStore'
 import TextInputField from '../Checkout/Components/text-input-field.vue'
-import mxupImage from '/products/keyboards/up-nobg.webp'
 
-const infoStore = useInfoStore()
+import loginImage from '/products/keyboards/up-nobg.webp'
+import registerImage from '/display/deskmat.webp'
+
+const authStore = useAuthStore()
+
+const currentImage = computed(() =>
+	authStore.mode === 'signIn' ? loginImage : registerImage,
+)
 </script>
 
 <template>
@@ -16,66 +23,161 @@ const infoStore = useInfoStore()
 				class="flex h-full w-full flex-col items-center overflow-hidden rounded-b-md bg-k-black"
 			>
 				<div
-					class="relative mt-20 flex max-w-6xl flex-col items-center text-center transition-transform duration-200 sm:w-4/5 md:grid md:w-11/12 md:grid-cols-2 md:text-start lg:w-4/5"
+					class="relative mt-20 flex max-w-6xl flex-col items-center text-center sm:w-4/5 md:grid md:w-11/12 md:grid-cols-2 md:text-start lg:w-4/5"
 				>
-					<div class="mb-2 mt-8 px-6 py-12">
+					<!-- ================= FORM ================= -->
+					<div class="relative mb-2 mt-8 overflow-hidden px-6 py-12">
 						<p class="mb-2 font-bold capitalize tracking-wider text-k-main">
-							Login to Website
+							{{ authStore.mode === 'signIn' ? 'Login' : 'Register' }} to
+							Website
 						</p>
 
-						<div class="flex w-full flex-col gap-4">
-							<TextInputField
-								id="name"
-								type="text"
-								label=""
-								placeholder="Username"
-								autocomplete="off"
-								required
-								v-model="infoStore.name"
-								:error-message="
-									infoStore.name && !infoStore.isNameValid
-										? 'Name must be at least 2 characters'
-										: ''
-								"
-							/>
+						<Transition name="form-scale" mode="out-in">
+							<div :key="authStore.mode" class="flex w-full flex-col gap-4">
+								<TextInputField
+									v-if="authStore.mode === 'signUp'"
+									id="name"
+									type="text"
+									label=""
+									placeholder="Username"
+									v-model="authStore.name"
+									:error-message="
+										authStore.name && !authStore.isNameValid
+											? 'Name must be at least 2 characters'
+											: ''
+									"
+								/>
 
-							<TextInputField
-								id="email"
-								type="email"
-								label=""
-								placeholder="Password"
-								autocomplete="off"
-								required
-								v-model="infoStore.email"
-								:error-message="
-									infoStore.email && !infoStore.isEmailValid
-										? 'Email is not valid'
-										: ''
-								"
-							/>
-						</div>
+								<TextInputField
+									id="email"
+									type="email"
+									label=""
+									placeholder="Email"
+									v-model="authStore.email"
+									:error-message="
+										authStore.email && !authStore.isEmailValid
+											? 'Email is not valid'
+											: ''
+									"
+								/>
+
+								<TextInputField
+									id="password"
+									label=""
+									type="password"
+									placeholder="Password"
+									v-model="authStore.password"
+									:error-message="
+										authStore.password && !authStore.isPasswordValid
+											? 'Password must be at least 8 characters'
+											: ''
+									"
+								/>
+
+								<TextInputField
+									v-if="authStore.mode === 'signUp'"
+									id="passwordConfirm"
+									type="password"
+									label=""
+									placeholder="Confirm password"
+									v-model="authStore.passwordConfirm"
+									:error-message="
+										authStore.passwordConfirm && !authStore.isPasswordMatch
+											? 'Passwords do not match'
+											: ''
+									"
+								/>
+							</div>
+						</Transition>
 
 						<button
-							type="button"
-							class="mt-6 w-full cursor-pointer rounded bg-[#ffC700] py-3 font-bold uppercase text-white transition active:translate-y-0.5 disabled:opacity-90"
-							:disabled="!infoStore.canUpdateInfo || infoStore.loadingInfo"
-							@click="infoStore.updateInfo"
+							class="mt-6 w-full rounded bg-[#ffc700] py-3 font-bold uppercase text-white transition active:translate-y-0.5 disabled:opacity-80"
+							:disabled="!authStore.canSubmit || authStore.loading"
+							@click="authStore.submit"
 						>
-							{{ 'Login' }}
+							{{ authStore.mode === 'signIn' ? 'Login' : 'Register' }}
 						</button>
+
+						<p class="mt-4 text-center text-[14px]">
+							{{
+								authStore.mode === 'signIn'
+									? "Don't have an account?"
+									: 'Already have an account?'
+							}}
+							<span
+								class="ml-1 cursor-pointer text-[#ffc700]"
+								@click="
+									authStore.setMode(
+										authStore.mode === 'signIn' ? 'signUp' : 'signIn',
+									)
+								"
+							>
+								{{ authStore.mode === 'signIn' ? 'Sign Up' : 'Login' }}
+							</span>
+						</p>
 					</div>
 
-					<div
-						class="absolute bottom-0 z-0 aspect-auto w-full opacity-30 md:relative md:z-10 md:opacity-100"
-					>
-						<img
-							class="relative top-12 scale-[175%] md:top-20 md:scale-[175%] lg:top-12 lg:scale-150"
-							:src="mxupImage"
-							alt=""
-						/>
+					<div class="relative overflow-hidden">
+						<Transition name="image-fade" mode="out-in">
+							<div :key="authStore.mode" class="image-wrapper">
+								<img :src="currentImage" class="image-inner" alt="" />
+							</div>
+						</Transition>
 					</div>
 				</div>
 			</section>
 		</main>
 	</div>
 </template>
+
+<style scoped>
+.form-scale-enter-active {
+	transition: all 0.35s ease;
+}
+
+.form-scale-leave-active {
+	display: none;
+}
+
+.form-scale-enter-from {
+	opacity: 0;
+	transform: scale(0.85);
+}
+
+.form-scale-enter-to {
+	opacity: 1;
+	transform: scale(1);
+}
+
+.image-fade-enter-active {
+	transition:
+		opacity 0.45s ease,
+		transform 0.45s ease;
+}
+
+.image-fade-leave-active {
+	display: none;
+}
+
+.image-fade-enter-from {
+	opacity: 0;
+	transform: scale(0.96);
+}
+
+.image-fade-enter-to {
+	opacity: 1;
+	transform: scale(1);
+}
+
+.image-wrapper {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	will-change: transform, opacity;
+}
+
+.image-inner {
+	position: relative;
+	opacity: 0.85;
+}
+</style>
