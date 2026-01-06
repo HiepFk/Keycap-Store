@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  Query,
+} from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { ResponseMessage } from 'src/decorator/customize';
@@ -19,9 +27,16 @@ export class OrdersController {
   /* ================= FIND ALL ================= */
 
   @Get()
-  @ResponseMessage('Lấy danh sách đơn hàng thành công')
-  findAll() {
-    return this.ordersService.findAll();
+  @ResponseMessage('Fetch List Orders')
+  findAll(@Query() query: Record<string, any>) {
+    const { page = '1', limit = '10', search = '', ...restQuery } = query;
+
+    return this.ordersService.findAll(
+      Number(page),
+      Number(limit),
+      search,
+      restQuery,
+    );
   }
 
   /* ================= FIND ONE (CHI TIẾT ĐƠN HÀNG) ================= */
