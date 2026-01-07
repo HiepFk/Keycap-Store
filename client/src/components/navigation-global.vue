@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import cartIcon from '/icons/cart-icon.svg'
+import userIcon from '/icons/user-icon.svg'
 import Cart from './Cart/cart-modal.vue'
 import { computed, ref } from 'vue'
 import { useCartStore } from '../pinia/cartStore.ts'
@@ -101,7 +102,7 @@ const accessToken = getAccessToken()
 					>Deskmats
 				</router-link>
 			</nav>
-			<div class="flex items-center gap-8">
+			<div class="flex items-center gap-6">
 				<div
 					class="relative h-5 cursor-pointer"
 					@click="cartStore.cartOn()"
@@ -132,7 +133,7 @@ const accessToken = getAccessToken()
 				>
 					<img
 						class="h-full hover:opacity-50 active:translate-y-0.5"
-						:src="cartIcon"
+						:src="userIcon"
 						alt=""
 					/>
 				</router-link>

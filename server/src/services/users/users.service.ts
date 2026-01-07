@@ -56,7 +56,7 @@ export class UsersService {
     createUserDto.password = this.getHasPassword(createUserDto.password);
     let newUser = await this.userModel.create({
       ...createUserDto,
-      role: 'USER',
+      role: '66b8a1000000000000000001',
     });
     return newUser;
   }

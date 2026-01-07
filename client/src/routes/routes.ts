@@ -32,6 +32,7 @@ const routes = [
 		path: '/login',
 		name: 'Login',
 		component: LoginPage,
+		beforeEnter: () => handleRouteMeta(getLandingPageMeta),
 	},
 
 	{

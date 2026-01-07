@@ -8,6 +8,8 @@ const props = defineProps<{
 	orderCode: string
 	order: any
 }>()
+
+console.log('order--------------', props.order)
 </script>
 
 <template>
@@ -25,7 +27,10 @@ const props = defineProps<{
 			<p class="font-semibold text-black">{{ formatDate(order?.createdAt) }}</p>
 		</div>
 
-		<OrderProgress :status="order.status" />
+		<OrderProgress
+			:status="order.status"
+			:statusHistory="order?.statusHistory"
+		/>
 
 		<div class="mt-8 flex items-center justify-between text-black">
 			<div class="flex flex-col gap-4">
@@ -105,16 +110,28 @@ const props = defineProps<{
 						>{{ order?.totalAmount }} $</span
 					>
 				</p>
-				<p class="mt-4">
-					Method:
-					<span
-						class="ml-2 rounded bg-[#ffc700] px-2 py-1 font-semibold text-white"
-						>{{
-							PAYMENT_METHOD_CONFIG[order?.paymentMethod as PaymentMethod]?.text
-						}}
-					</span>
-				</p>
 			</div>
+		</div>
+
+		<div class="mt-6 flex justify-between text-black">
+			<div
+				class="cursor-pointer rounded bg-red-500 px-2 py-1 font-semibold text-white"
+				v-if="order.status === 'pending'"
+			>
+				Cancel
+			</div>
+
+			<div v-else></div>
+
+			<p class="">
+				Method:
+				<span
+					class="ml-2 rounded bg-[#ffc700] px-2 py-1 font-semibold text-white"
+					>{{
+						PAYMENT_METHOD_CONFIG[order?.paymentMethod as PaymentMethod]?.text
+					}}
+				</span>
+			</p>
 		</div>
 	</div>
 </template>

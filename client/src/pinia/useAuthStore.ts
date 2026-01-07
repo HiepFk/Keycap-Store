@@ -1,28 +1,24 @@
 import { defineStore } from 'pinia'
+import { signInApi, signUpApi } from '../apis/auth'
+import { setTokens } from '../utils/token'
+import Router from '../routes/routes'
 
 type AuthMode = 'signIn' | 'signUp'
 
 export const useAuthStore = defineStore('auth', {
 	state: () => ({
-		// mode
 		mode: 'signIn' as AuthMode,
 
-		// fields (dùng chung)
 		name: '',
 		email: '',
 		phone: '',
 		password: '',
 		passwordConfirm: '',
 
-		// ui
 		loading: false,
 	}),
 
-	// ======================
-	// GETTERS – VALIDATION
-	// ======================
 	getters: {
-		// ---- base ----
 		isEmailValid: (s): boolean => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s.email),
 
 		isPasswordValid: (s): boolean => s.password.length >= 8,
@@ -62,6 +58,8 @@ export const useAuthStore = defineStore('auth', {
 		},
 
 		async submit() {
+			console.log(111111111)
+
 			if (!this.canSubmit) {
 				throw new Error('Invalid auth data')
 			}
@@ -70,18 +68,24 @@ export const useAuthStore = defineStore('auth', {
 			try {
 				if (this.mode === 'signIn') {
 					// CALL LOGIN API
-					console.log('Sign in', {
+					const res: any = await signInApi({
 						email: this.email,
 						password: this.password,
 					})
+
+					setTokens(res?.access_token, res?.refresh_token)
+
+					await Router.push('/')
 				} else {
-					// CALL REGISTER API
-					console.log('Sign up', {
+					const res: any = await signUpApi({
 						name: this.name,
 						email: this.email,
-						phone: this.phone,
 						password: this.password,
 					})
+
+					setTokens(res?.access_token, res?.refresh_token)
+
+					await Router.push('/')
 				}
 			} finally {
 				this.loading = false

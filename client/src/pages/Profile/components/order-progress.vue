@@ -2,9 +2,11 @@
 import { computed } from 'vue'
 import { ORDER_STATUS_STEPS } from '../../../utils/constants'
 import { OrderStatus } from '../../../data/order-types'
+import { formatDate } from '../../../utils/utilities'
 
 const props = defineProps<{
 	status: OrderStatus
+	statusHistory: any[]
 }>()
 
 const currentIndex = computed(() =>
@@ -29,19 +31,27 @@ const currentIndex = computed(() =>
 						index < currentIndex
 							? 'bg-green-500'
 							: index === currentIndex
-							? 'bg-yellow-500'
+							? 'bg-green-500'
 							: 'bg-gray-300'
 					"
 				>
 					{{ index + 1 }}
 				</div>
 
-				<span
-					class="mt-2 text-center text-xs font-medium"
-					:class="index <= currentIndex ? 'text-black' : 'text-gray-400'"
-				>
-					{{ step.label }}
-				</span>
+				<div class="flex flex-col">
+					<span
+						class="mt-2 text-center text-xs font-medium"
+						:class="index <= currentIndex ? 'text-black' : 'text-gray-400'"
+					>
+						{{ step.label }}
+					</span>
+
+					<span
+						v-if="index < currentIndex + 1"
+						class="text-center text-xs font-medium text-black"
+						>{{ formatDate(props.statusHistory[index]?.at) }}</span
+					>
+				</div>
 			</div>
 
 			<div

@@ -12,6 +12,18 @@ const authStore = useAuthStore()
 const currentImage = computed(() =>
 	authStore.mode === 'signIn' ? loginImage : registerImage,
 )
+
+const toggleMode = () => {
+	authStore.setMode(authStore.mode === 'signIn' ? 'signUp' : 'signIn')
+}
+
+const handleSubmit = async () => {
+	try {
+		await authStore.submit()
+	} catch (err) {
+		console.error(err)
+	}
+}
 </script>
 
 <template>
@@ -38,7 +50,6 @@ const currentImage = computed(() =>
 									v-if="authStore.mode === 'signUp'"
 									id="name"
 									type="text"
-									label=""
 									placeholder="Username"
 									v-model="authStore.name"
 									:error-message="
@@ -51,7 +62,6 @@ const currentImage = computed(() =>
 								<TextInputField
 									id="email"
 									type="email"
-									label=""
 									placeholder="Email"
 									v-model="authStore.email"
 									:error-message="
@@ -63,7 +73,6 @@ const currentImage = computed(() =>
 
 								<TextInputField
 									id="password"
-									label=""
 									type="password"
 									placeholder="Password"
 									v-model="authStore.password"
@@ -78,7 +87,6 @@ const currentImage = computed(() =>
 									v-if="authStore.mode === 'signUp'"
 									id="passwordConfirm"
 									type="password"
-									label=""
 									placeholder="Confirm password"
 									v-model="authStore.passwordConfirm"
 									:error-message="
@@ -91,11 +99,15 @@ const currentImage = computed(() =>
 						</Transition>
 
 						<button
+							type="button"
 							class="mt-6 w-full rounded bg-[#ffc700] py-3 font-bold uppercase text-white transition active:translate-y-0.5 disabled:opacity-80"
 							:disabled="!authStore.canSubmit || authStore.loading"
-							@click="authStore.submit"
+							@click="handleSubmit"
 						>
-							{{ authStore.mode === 'signIn' ? 'Login' : 'Register' }}
+							<span v-if="!authStore.loading">
+								{{ authStore.mode === 'signIn' ? 'Login' : 'Register' }}
+							</span>
+							<span v-else>Processing...</span>
 						</button>
 
 						<p class="mt-4 text-center text-[14px]">
@@ -106,17 +118,14 @@ const currentImage = computed(() =>
 							}}
 							<span
 								class="ml-1 cursor-pointer text-[#ffc700]"
-								@click="
-									authStore.setMode(
-										authStore.mode === 'signIn' ? 'signUp' : 'signIn',
-									)
-								"
+								@click="toggleMode"
 							>
 								{{ authStore.mode === 'signIn' ? 'Sign Up' : 'Login' }}
 							</span>
 						</p>
 					</div>
 
+					<!-- ================= IMAGE ================= -->
 					<div class="relative overflow-hidden">
 						<Transition name="image-fade" mode="out-in">
 							<div :key="authStore.mode" class="image-wrapper">
@@ -134,16 +143,13 @@ const currentImage = computed(() =>
 .form-scale-enter-active {
 	transition: all 0.35s ease;
 }
-
 .form-scale-leave-active {
 	display: none;
 }
-
 .form-scale-enter-from {
 	opacity: 0;
 	transform: scale(0.85);
 }
-
 .form-scale-enter-to {
 	opacity: 1;
 	transform: scale(1);
@@ -154,16 +160,13 @@ const currentImage = computed(() =>
 		opacity 0.45s ease,
 		transform 0.45s ease;
 }
-
 .image-fade-leave-active {
 	display: none;
 }
-
 .image-fade-enter-from {
 	opacity: 0;
 	transform: scale(0.96);
 }
-
 .image-fade-enter-to {
 	opacity: 1;
 	transform: scale(1);
@@ -175,7 +178,6 @@ const currentImage = computed(() =>
 	height: 100%;
 	will-change: transform, opacity;
 }
-
 .image-inner {
 	position: relative;
 	opacity: 0.85;
