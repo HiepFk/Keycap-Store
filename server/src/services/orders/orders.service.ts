@@ -50,11 +50,10 @@ export class OrdersService {
 
     const mongoFilter: any = { ...filter };
 
-    // ===== Populate product =====
     const populates: any[] = [
       {
         path: 'products.productId',
-        select: 'header src',
+        select: 'header src subheader category price',
       },
     ];
 
@@ -103,8 +102,10 @@ export class OrdersService {
           _id: product?._id,
           src: product?.src,
           header: product?.header,
-          quantity: item.quantity,
-          totalPrice: item.totalPrice,
+          subheader: product?.subheader,
+          price: product?.price,
+          category: product?.category,
+          quantity: item?.quantity,
         };
       }),
     }));
@@ -122,16 +123,38 @@ export class OrdersService {
 
   async findOne(id: string) {
     const order = await this.orderModel
-      .findOne({ _id: id, isDeleted: false })
+      .findOne({ orderCode: id, isDeleted: false })
       .populate('createdBy', 'email name')
-      .populate('products.productId', 'header src price category')
+      .populate({
+        path: 'products.productId',
+        select: 'header src subheader category',
+      })
+      .lean()
       .exec();
 
     if (!order) {
       throw new NotFoundException('Không tìm thấy đơn hàng');
     }
 
-    return order;
+    const mappedOrder = {
+      ...order,
+      products: order.products.map((item) => {
+        const product = item.productId as any;
+
+        return {
+          _id: product?._id,
+          header: product?.header,
+          subheader: product?.subheader,
+          src: product?.src,
+          price: product?.price || item.totalPrice / item?.quantity,
+          category: product?.category,
+          quantity: item.quantity,
+          totalPrice: item.totalPrice,
+        };
+      }),
+    };
+
+    return mappedOrder;
   }
 
   async remove(id: string, userId: string) {

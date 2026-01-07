@@ -6,7 +6,7 @@ import instagramIcon from '/icons/instagram.svg'
 
 <template>
 	<footer
-		class="relative mt-20 flex h-full w-screen flex-col items-center bg-black md:mt-32 lg:mt-40"
+		class="relative mt-10 flex h-full w-screen flex-col items-center bg-black"
 	>
 		<div
 			class="flex w-4/5 flex-row justify-center md:w-11/12 md:max-w-6xl md:justify-start lg:w-4/5"

@@ -28,23 +28,26 @@ onMounted(async () => {
 
 <template>
 	<form class="col-span-4 h-full w-full rounded bg-white p-6">
-		<h1 class="mb-8 text-3xl font-bold uppercase text-black">Order List</h1>
+		<h1 class="mb-8 text-xl font-bold uppercase text-black">Order List</h1>
 
 		<div class="flex flex-col gap-12 text-black">
 			<div v-for="(order, index) in orderList" :key="index" :index="index">
 				<div class="mb-2 flex items-center justify-between border-b pb-2">
-					<p class="">
+					<p class="text-primary font-semibold">
 						Order Id:
-						<span
-							class="text-primary cursor-pointer rounded bg-[#ffc700] px-2 py-1 font-semibold"
-						>
-							{{ order?.orderCode }}
-						</span>
+
+						<router-link :to="`/orders/${order?.orderCode}`">
+							<span
+								class="cursor-pointer rounded bg-[#ffc700] px-2 py-1 font-semibold text-white"
+							>
+								{{ order?.orderCode }}
+							</span>
+						</router-link>
 					</p>
 					<div class="flex items-center gap-4">
 						<p class="font-semibold">{{ formatDate(order?.createdAt) }}</p>
 						<p
-							class="rounded px-2 py-1 text-white"
+							class="w-[7rem] rounded py-1 text-center text-white"
 							:class="ORDER_STATUS_CONFIG[order.status as OrderStatus].class"
 						>
 							{{ ORDER_STATUS_CONFIG[order.status as OrderStatus].label }}
@@ -52,7 +55,7 @@ onMounted(async () => {
 					</div>
 				</div>
 
-				<div class="flex items-center justify-between border-b pb-2">
+				<div class="flex items-center justify-between border-b">
 					<div class="flex flex-col gap-4">
 						<div
 							v-for="(product, index) in order?.products"
@@ -60,14 +63,27 @@ onMounted(async () => {
 							:index="index"
 						>
 							<div class="mb-4 flex gap-4">
-								<img
-									:src="product?.src"
-									class="image-inner w-[4rem] rounded"
-									alt=""
-								/>
+								<router-link
+									:to="{ name: product.category, params: { id: product._id } }"
+								>
+									<img
+										loading="lazy"
+										:src="product?.src"
+										class="image-inner w-[6rem] rounded"
+										alt=""
+									/>
+								</router-link>
+
 								<div class="flex flex-col justify-between">
-									<p>{{ product?.header }}</p>
-									<p>{{ product?.quantity }} x {{ product?.totalPrice }}$</p>
+									<div>
+										<p class="text-[18px] font-semibold">
+											{{ product?.header }}
+										</p>
+										<p class="text-base">{{ product?.subheader }}</p>
+									</div>
+									<p class="text-base">
+										{{ product?.quantity }} x {{ product?.price }}$
+									</p>
 								</div>
 							</div>
 						</div>

@@ -1,14 +1,13 @@
 import { RouteLocationNormalized, NavigationGuardNext } from 'vue-router'
 import { useSeoMeta } from '@unhead/vue'
-import { getProduct } from '../data/product-utils.ts'
 import { meta } from '../data/meta-types'
-import { getCategoryPageMeta, getProductPageMeta } from '../data/meta-utils'
+import { getCategoryPageMeta } from '../data/meta-utils'
 import { getProductById } from '../apis/product.ts'
 
-function parseRouteId(id: string | string[]): number {
-	if (Array.isArray(id)) return parseInt(id[0])
-	return parseInt(id)
-}
+import OrderDetail from '../pages/Profile/components/order.vue'
+import CategoryPage from '../pages/Category/category-page.vue'
+import ProductPage from '../pages/Product/product-page.vue'
+import { getOrderById } from '../apis/order.ts'
 
 export function handleRouteMeta(metaFunc: () => meta): void {
 	const metaData = metaFunc()
@@ -24,7 +23,7 @@ export function handleRouteMeta(metaFunc: () => meta): void {
 export function categoryRoute(category: string) {
 	return {
 		path: `/${category}`,
-		component: () => import('../pages/Category/category-page.vue'),
+		component: CategoryPage,
 		props: { category: category },
 		beforeEnter: () => {
 			const meta = getCategoryPageMeta(category)
@@ -43,7 +42,7 @@ export function productRoute(category: string) {
 	return {
 		path: `/${category}/:id`,
 		name: category,
-		component: () => import('../pages/Product/product-page.vue'),
+		component: ProductPage,
 
 		props: (route: RouteLocationNormalized) => ({
 			category,
@@ -67,12 +66,54 @@ export function productRoute(category: string) {
 				to.meta.product = product
 
 				useSeoMeta({
-					title: product.title,
-					description: product.description,
-					ogTitle: product.title,
-					ogDescription: product.description,
-					ogImage: product.image,
+					title: product.header,
+					description: product.subheader,
+					ogTitle: product.header,
+					ogDescription: product.subheader,
+					ogImage: product.src,
 				})
+
+				next()
+			} catch (e) {
+				next('/404')
+			}
+		},
+	}
+}
+
+export function orderRoute() {
+	return {
+		path: `/orders/:id`,
+		name: 'Order',
+		component: OrderDetail,
+
+		props: (route: RouteLocationNormalized) => ({
+			orderCode: Number(route.params.id),
+			order: route.meta.order, // 👈 truyền thẳng order
+		}),
+
+		beforeEnter: async (
+			to: RouteLocationNormalized,
+			_: RouteLocationNormalized,
+			next: NavigationGuardNext,
+		) => {
+			try {
+				const order: any = await getOrderById(to.params.id as string)
+
+				if (!order) {
+					next('/404')
+					return
+				}
+
+				to.meta.order = order
+
+				// useSeoMeta({
+				// 	title: product.header,
+				// 	description: product.subheader,
+				// 	ogTitle: product.header,
+				// 	ogDescription: product.subheader,
+				// 	ogImage: product.src,
+				// })
 
 				next()
 			} catch (e) {
