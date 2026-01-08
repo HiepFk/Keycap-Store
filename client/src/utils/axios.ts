@@ -35,10 +35,8 @@ api.interceptors.request.use((config: any) => {
 	return config
 })
 
-// Xử lý lỗi response
 api.interceptors.response.use(
 	(response: AxiosResponse) => {
-		// Mình chỉ lấy res.data.data nếu có, còn không thì trả res.data
 		return response.data?.data ?? response.data
 	},
 	async (

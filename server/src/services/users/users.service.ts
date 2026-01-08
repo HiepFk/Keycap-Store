@@ -8,11 +8,13 @@ import aqp from 'api-query-params';
 import { User } from '../../decorator/customize';
 import { User as UserM, UserDocument } from './schemas/user.schemas';
 import type { IUser } from 'src/interface/users.interface';
+import { RoleDocument } from '../roles/schemas/role.schemas';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectModel(UserM.name) private userModel: Model<UserDocument>,
+    @InjectModel(UserM.name) private roleModel: Model<RoleDocument>,
   ) {}
 
   getHasPassword = (pass: string) => {
@@ -54,9 +56,16 @@ export class UsersService {
     }
 
     createUserDto.password = this.getHasPassword(createUserDto.password);
+    let roleUser: any;
+    if (!createUserDto?.role) {
+      roleUser = await this.roleModel.findOne({ name: 'user' });
+      if (!roleUser) {
+        throw new ConflictException('Not has user role');
+      }
+    }
     let newUser = await this.userModel.create({
       ...createUserDto,
-      role: '66b8a1000000000000000001',
+      role: roleUser?._id,
     });
     return newUser;
   }

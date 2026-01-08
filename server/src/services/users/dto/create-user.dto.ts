@@ -21,9 +21,9 @@ export class CreateUserDto {
   @MinLength(6, { message: 'Mật khẩu phải có ít nhất 8 ký tự.' })
   password: string;
 
-  // @IsOptional()
-  // @Matches(/^[0-9]{9,15}$/, { message: 'Số điện thoại không hợp lệ.' })
-  // phone?: string;
+  @IsOptional()
+  @Matches(/^[0-9]{9,15}$/, { message: 'Số điện thoại không hợp lệ.' })
+  phone?: string;
 
   @IsOptional()
   @IsMongoId({ message: 'ID vai trò không hợp lệ.' })

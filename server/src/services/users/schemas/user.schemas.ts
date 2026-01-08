@@ -20,6 +20,9 @@ export class User {
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'Role' })
   role: mongoose.Types.ObjectId;
 
+  @Prop()
+  refreshToken: string;
+
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
   createdBy: mongoose.Types.ObjectId;
 

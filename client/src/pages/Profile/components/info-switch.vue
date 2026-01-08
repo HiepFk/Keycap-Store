@@ -1,4 +1,19 @@
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { logoutApi } from '../../../apis/auth'
+import Router from '../../../routes/routes'
+import { clearTokens } from '../../../utils/token'
+
+const handleLogout = async () => {
+	try {
+		await logoutApi()
+	} catch (error) {
+		console.log(error)
+	} finally {
+		clearTokens()
+		await Router.push('/')
+	}
+}
+</script>
 
 <template>
 	<div
@@ -30,6 +45,15 @@
 		>
 			My Address
 		</router-link>
+
+		<div class="mt-2 flex w-full items-center justify-center">
+			<span
+				class="cursor-pointer rounded bg-[#ffc700] px-2 py-1 font-semibold text-white"
+				@click="handleLogout"
+			>
+				Logout
+			</span>
+		</div>
 	</div>
 </template>
 

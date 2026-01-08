@@ -1,3 +1,4 @@
+import { getAccessToken } from './../utils/token'
 import { RouteLocationNormalized, NavigationGuardNext } from 'vue-router'
 import { useSeoMeta } from '@unhead/vue'
 import { meta } from '../data/meta-types'
@@ -8,6 +9,7 @@ import OrderDetail from '../pages/Profile/components/order.vue'
 import CategoryPage from '../pages/Category/category-page.vue'
 import ProductPage from '../pages/Product/product-page.vue'
 import { getOrderById } from '../apis/order.ts'
+import { getProfileApi } from '../apis/auth.ts'
 
 export function handleRouteMeta(metaFunc: () => meta): void {
 	const metaData = metaFunc()
@@ -120,5 +122,35 @@ export function orderRoute() {
 				next('/404')
 			}
 		},
+	}
+}
+
+export function authRoute() {
+	return async (
+		to: RouteLocationNormalized,
+		_: RouteLocationNormalized,
+		next: NavigationGuardNext,
+	) => {
+		try {
+			const accessToken = getAccessToken()
+
+			if (!accessToken) {
+				next('/')
+				return
+			}
+
+			const profile = await getProfileApi()
+
+			if (!profile) {
+				next('/')
+				return
+			}
+
+			to.meta.profile = profile
+
+			next()
+		} catch (error) {
+			next('/')
+		}
 	}
 }

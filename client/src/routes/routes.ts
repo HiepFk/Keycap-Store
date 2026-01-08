@@ -6,6 +6,7 @@ import {
 	productRoute,
 	handleRouteMeta,
 	orderRoute,
+	authRoute,
 } from './route-utils'
 import {
 	get404PageMeta,
@@ -43,7 +44,8 @@ const routes = [
 
 	{
 		path: '/',
-		component: ProfilePage, // layout
+		component: ProfilePage,
+		beforeEnter: authRoute(),
 
 		children: [
 			{

@@ -1,8 +1,16 @@
 <script setup lang="ts">
 import TextInputField from '../../Checkout/Components/text-input-field.vue'
 import { useInfoStore } from '../../../pinia/infoStore'
+import { useRoute } from 'vue-router'
+import { computed } from 'vue'
 
 const infoStore = useInfoStore()
+
+const route = useRoute()
+
+const profile = computed(() => route.meta.profile)
+
+console.log('profile------------', profile.value)
 </script>
 
 <template>
