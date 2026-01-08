@@ -3,50 +3,61 @@ import TextInputField from './text-input-field.vue'
 import { useFormStore } from '../../../pinia/formStore.ts'
 
 const formStore = useFormStore()
+
+const handleChosseTypePayment = (e: Event, type: string) => {
+	e.preventDefault()
+	formStore.setTypePayment(type)
+}
 </script>
 <template>
-	<form
-		class="col-span-2 h-full w-full rounded bg-white px-6 py-12 lg:px-10"
-		id="checkoutForm"
-	>
+	<form class="col-span-2 h-full w-full rounded bg-white px-6 py-12 lg:px-10">
 		<h1 class="text-3xl font-bold uppercase text-black">Checkout</h1>
 		<div class="mt-10">
 			<p class="mb-2 font-bold uppercase tracking-wider text-k-main">
 				Billing details
 			</p>
-			<div
-				class="flex w-full flex-col items-center gap-4 lg:grid lg:grid-cols-2"
-			>
+			<div class="flex w-full flex-col items-center gap-4">
 				<TextInputField
-					type="text"
-					:validator="formStore.isValidName"
 					id="name"
+					type="text"
 					label="Name"
-					placeholder="Alex Keebs"
-					error-message="Characters only."
+					placeholder="Your name"
 					autocomplete="off"
-					:required="true"
+					required
+					v-model="formStore.name"
+					:error-message="
+						formStore.name && !formStore.isNameValid ? 'Name is required' : ''
+					"
 				/>
 
 				<TextInputField
-					type="email"
-					:validator="formStore.isValidEmail"
 					id="email"
+					type="email"
 					label="Email Address"
 					placeholder="alex@mail.com"
-					error-message="Must be a valid email address."
+					required
 					autocomplete="off"
-					:required="true"
+					v-model="formStore.email"
+					:error-message="
+						formStore.email && !formStore.isEmailValid
+							? 'Must be a valid email address.'
+							: ''
+					"
 				/>
 
 				<TextInputField
-					type="tel"
-					:validator="formStore.isValidPhone"
 					id="phone"
+					type="tel"
 					label="Phone Number"
 					placeholder="+1000-555-0136"
-					error-message="Numbers and '+-' only."
+					required
 					autocomplete="off"
+					v-model="formStore.phone"
+					:error-message="
+						formStore.phone && !formStore.isPhoneValid
+							? 'Must be a valid phone.'
+							: ''
+					"
 				/>
 			</div>
 		</div>
@@ -55,53 +66,34 @@ const formStore = useFormStore()
 			<p class="mb-2 font-bold uppercase tracking-wider text-k-main">
 				Shipping Info
 			</p>
-			<div
-				class="flex w-full flex-col items-center gap-4 lg:grid lg:grid-cols-2"
-			>
+			<div class="flex w-full flex-col items-center gap-4">
 				<TextInputField
-					type="text"
-					:validator="formStore.isValidAddress"
-					id="address"
-					label="Address"
-					container-class="col-span-2"
-					placeholder="1134 Willams Avenue"
-					error-message="Only characters and ',-/. allowed."
-					autocomplete="off"
-					:required="true"
-				/>
-
-				<TextInputField
-					type="text"
-					:validator="formStore.isValidZip"
-					id="zip"
-					label="Zip Code"
-					placeholder="10001"
-					error-message="Only 5 digit numbers allowed."
-					autocomplete="off"
-					max-length="5"
-					:required="true"
-				/>
-
-				<TextInputField
-					type="text"
-					:validator="formStore.isValidCity"
 					id="city"
+					type="text"
 					label="City"
 					placeholder="New York"
-					error-message="Must contain non-special characters."
 					autocomplete="off"
-					:required="true"
+					required
+					v-model="formStore.city"
+					:error-message="
+						formStore.city && !formStore.isCityValid ? 'City is required' : ''
+					"
 				/>
 
 				<TextInputField
+					id="address"
+					label="Address"
 					type="text"
-					:validator="formStore.isValidCountry"
-					id="country"
-					label="Country"
-					placeholder="United Stated"
-					error-message="Must contain non-special characters."
+					placeholder="1134 Willams Avenue"
 					autocomplete="off"
-					:required="true"
+					required
+					container-class="col-span-2"
+					v-model="formStore.address"
+					:error-message="
+						formStore.address && !formStore.isAddressValid
+							? 'Address is required'
+							: ''
+					"
 				/>
 			</div>
 		</div>
@@ -114,27 +106,50 @@ const formStore = useFormStore()
 			<div class="flex w-full flex-col gap-4 lg:grid lg:grid-cols-2">
 				<button
 					class="group flex w-full cursor-pointer flex-row items-center gap-4 rounded border border-black border-opacity-60 p-3 transition-all active:translate-y-0.5"
-					:class="{ 'bg-k-main': !formStore.choseCash }"
-					@click="formStore.setElectronic($event)"
-					data-test="form-button-emoney"
+					:class="{ 'bg-k-main': formStore.payment === 'cod' }"
+					@click="handleChosseTypePayment($event, 'cod')"
 				>
 					<div
 						class="aspect-square h-3 rounded-full border border-black border-opacity-60"
-						:class="{ 'bg-black': !formStore.choseCash }"
+						:class="{ 'bg-black': formStore.payment === 'cod' }"
 					></div>
-					<span class="font-semibold text-black"> e-Money </span>
+					<span class="font-semibold text-black"> Cash On Delivery </span>
 				</button>
+
 				<button
 					class="group flex w-full cursor-pointer flex-row items-center gap-4 rounded border border-black border-opacity-60 p-3 transition-all active:translate-y-0.5"
-					:class="{ 'bg-k-main': formStore.choseCash }"
-					@click="formStore.setCash($event)"
-					data-test="form-button-cash"
+					:class="{ 'bg-k-main': formStore.payment === 'vnpay' }"
+					@click="handleChosseTypePayment($event, 'vnpay')"
 				>
 					<div
 						class="aspect-square h-3 rounded-full border border-black border-opacity-60"
-						:class="{ 'bg-black': formStore.choseCash }"
+						:class="{ 'bg-black': formStore.payment === 'vnpay' }"
 					></div>
-					<span class="font-semibold text-black"> Cash on Delivery </span>
+					<span class="font-semibold text-black"> Vnpay </span>
+				</button>
+
+				<button
+					class="group flex w-full cursor-pointer flex-row items-center gap-4 rounded border border-black border-opacity-60 p-3 transition-all active:translate-y-0.5"
+					:class="{ 'bg-k-main': formStore.payment === 'momo' }"
+					@click="handleChosseTypePayment($event, 'momo')"
+				>
+					<div
+						class="aspect-square h-3 rounded-full border border-black border-opacity-60"
+						:class="{ 'bg-black': formStore.payment === 'momo' }"
+					></div>
+					<span class="font-semibold text-black"> Momo </span>
+				</button>
+
+				<button
+					class="group flex w-full cursor-pointer flex-row items-center gap-4 rounded border border-black border-opacity-60 p-3 transition-all active:translate-y-0.5"
+					:class="{ 'bg-k-main': formStore.payment === 'banking' }"
+					@click="handleChosseTypePayment($event, 'banking')"
+				>
+					<div
+						class="aspect-square h-3 rounded-full border border-black border-opacity-60"
+						:class="{ 'bg-black': formStore.payment === 'banking' }"
+					></div>
+					<span class="font-semibold text-black"> Banking </span>
 				</button>
 
 				<div class="col-span-2 flex h-40 flex-col">
