@@ -23,7 +23,6 @@ export const useAuthStore = defineStore('auth', {
 
 		isPasswordValid: (s): boolean => s.password.length >= 8,
 
-		// ---- sign up only ----
 		isNameValid: (s): boolean => s.name.trim().length >= 2,
 
 		isPhoneValid: (s): boolean =>
@@ -31,13 +30,11 @@ export const useAuthStore = defineStore('auth', {
 
 		isPasswordMatch: (s): boolean => s.password === s.passwordConfirm,
 
-		// ---- mode-aware ----
 		canSubmit(): boolean {
 			if (this.mode === 'signIn') {
 				return this.isEmailValid && this.isPasswordValid
 			}
 
-			// signUp
 			return (
 				this.isNameValid &&
 				this.isEmailValid &&
@@ -48,9 +45,6 @@ export const useAuthStore = defineStore('auth', {
 		},
 	},
 
-	// ======================
-	// ACTIONS
-	// ======================
 	actions: {
 		setMode(mode: AuthMode) {
 			this.mode = mode
@@ -58,8 +52,6 @@ export const useAuthStore = defineStore('auth', {
 		},
 
 		async submit() {
-			console.log(111111111)
-
 			if (!this.canSubmit) {
 				throw new Error('Invalid auth data')
 			}
@@ -67,14 +59,12 @@ export const useAuthStore = defineStore('auth', {
 			this.loading = true
 			try {
 				if (this.mode === 'signIn') {
-					// CALL LOGIN API
 					const res: any = await signInApi({
 						email: this.email,
 						password: this.password,
 					})
 
 					setTokens(res?.access_token, res?.refresh_token)
-
 					await Router.push('/')
 				} else {
 					const res: any = await signUpApi({
@@ -84,7 +74,6 @@ export const useAuthStore = defineStore('auth', {
 					})
 
 					setTokens(res?.access_token, res?.refresh_token)
-
 					await Router.push('/')
 				}
 			} finally {

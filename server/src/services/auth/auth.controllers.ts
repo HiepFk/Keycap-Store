@@ -50,8 +50,12 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @Put('/password/upate')
   @ResponseMessage('Update password success')
-  handleUpdatePassword(@Body() updateUserDto: UpdateUserDto, @Req() req) {
-    return this.authService.updatePassword(updateUserDto, req.user);
+  handleUpdatePassword(
+    @Body() data: UpdateUserDto,
+    @User() user: IUser,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    return this.authService.updatePassword(data, user, response);
   }
 
   @Public()

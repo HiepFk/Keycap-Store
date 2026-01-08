@@ -2,12 +2,13 @@ import { Injectable, ConflictException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import ms from 'ms';
-import { Response, Request } from 'express';
+import { Response } from 'express';
 import { UsersService } from '../users/users.service';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { IUser } from 'src/interface/users.interface';
 import { RolesService } from '../roles/roles.service';
 import { UpdateUserDto } from '../users/dto/update-user.dto';
+import { compareSync } from 'bcryptjs';
 
 @Injectable()
 export class AuthService {
@@ -193,12 +194,60 @@ export class AuthService {
     }
   }
 
-  async updatePassword(data: UpdateUserDto, user: IUser) {
+  async updatePassword(data: any, user: IUser, response: Response) {
     try {
-      console.log('data---------------', data);
-      console.log('user---------------', user);
+      const { oldPassword, newPassword } = data;
+
+      const dbUser: any = await this.usersService.findByIdWithPassword(
+        user._id,
+      );
+
+      if (!dbUser) {
+        throw new ConflictException('User not found');
+      }
+
+      const isMatch = compareSync(oldPassword, dbUser.password);
+
+      if (!isMatch) {
+        throw new ConflictException('Old password is incorrect');
+      }
+
+      const hashedPassword = this.usersService.getHasPassword(newPassword);
+
+      await this.usersService.updatePassword(user._id, hashedPassword, user);
+
+      const payload = {
+        sub: 'access token',
+        iss: 'from server',
+        _id: dbUser._id,
+        name: dbUser.name,
+        email: dbUser.email,
+        role: dbUser.role,
+        phone: dbUser.phone,
+      };
+
+      const access_token = this.jwtService.sign(payload);
+      const refresh_token = this.createRefreshToken(payload);
+
+      await this.usersService.updateUserToken(
+        refresh_token,
+        dbUser._id.toString(),
+      );
+
+      response.clearCookie('refresh_token');
+      response.cookie('refresh_token', refresh_token, {
+        httpOnly: true,
+        maxAge: ms(
+          this.configService.getOrThrow('JWT_REFRESH_EXPIRE') as ms.StringValue,
+        ),
+      });
+
+      return {
+        access_token,
+        refresh_token,
+      };
     } catch (error) {
-      throw new ConflictException('Some thing went wrong');
+      throw new ConflictException(error?.message || 'Update password failed');
     }
   }
 }

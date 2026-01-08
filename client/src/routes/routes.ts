@@ -16,8 +16,6 @@ import {
 
 // profile children
 import InfoForm from '../pages/Profile/components/info-form.vue'
-import AdressList from '../pages/Profile/components/address-list.vue'
-import AdressDetail from '../pages/Profile/components/address.vue'
 import OrderList from '../pages/Profile/components/order-list.vue'
 
 import LoginPage from '../pages/Login/login-page.vue'
@@ -58,16 +56,7 @@ const routes = [
 				name: 'Orders',
 				component: OrderList,
 			},
-			{
-				path: '/address',
-				name: 'Address',
-				component: AdressList,
-			},
-			{
-				path: '/address:id',
-				name: 'Address Detail',
-				component: AdressDetail,
-			},
+
 			orderRoute(),
 		],
 	},

@@ -22,8 +22,8 @@ watch(
 </script>
 
 <template>
-	<form class="col-span-4 h-full w-full rounded bg-white px-6 py-12 lg:px-10">
-		<h1 class="text-3xl font-bold uppercase text-black">Profile Settings</h1>
+	<form class="col-span-4 h-full w-full rounded bg-white p-6">
+		<h1 class="text-xl font-bold uppercase text-black">Profile Settings</h1>
 
 		<div class="mb-2 mt-8">
 			<p class="mb-2 font-bold uppercase tracking-wider text-k-main">
@@ -78,7 +78,7 @@ watch(
 
 			<button
 				type="button"
-				class="mt-6 w-full cursor-pointer rounded bg-[#ffc700] py-3 font-bold uppercase text-white transition active:translate-y-0.5 disabled:bg-black disabled:opacity-40"
+				class="mt-4 w-full cursor-pointer rounded bg-[#ffc700] py-3 font-bold uppercase text-white transition active:translate-y-0.5 disabled:bg-black disabled:opacity-40"
 				:disabled="!infoStore.canUpdateInfo || infoStore.loadingInfo"
 				@click="infoStore.updateInfo"
 			>
@@ -86,12 +86,26 @@ watch(
 			</button>
 		</div>
 
-		<div class="mb-2 mt-10">
+		<div class="mb-2 mt-16">
 			<p class="mb-2 font-bold uppercase tracking-wider text-k-main">
 				Update Password
 			</p>
 
-			<div class="flex w-full flex-col gap-4 lg:grid lg:grid-cols-2">
+			<div class="flex w-full flex-col gap-4">
+				<TextInputField
+					id="oldPassword"
+					type="password"
+					label="Current Password"
+					placeholder="••••••••"
+					autocomplete="off"
+					v-model="infoStore.oldPassword"
+					:error-message="
+						infoStore.oldPassword && !infoStore.isOldPasswordValid
+							? 'Password must be at least 8 characters'
+							: ''
+					"
+				/>
+
 				<TextInputField
 					id="password"
 					type="password"
@@ -123,7 +137,7 @@ watch(
 
 			<button
 				type="button"
-				class="mt-6 w-full cursor-pointer rounded bg-[#ffc700] py-3 font-bold uppercase text-white transition active:translate-y-0.5 disabled:bg-black disabled:opacity-40"
+				class="mt-4 w-full cursor-pointer rounded bg-[#ffc700] py-3 font-bold uppercase text-white transition active:translate-y-0.5 disabled:bg-black disabled:opacity-40"
 				:disabled="!infoStore.canUpdatePassword || infoStore.loadingPass"
 				@click="infoStore.updatePassword"
 			>

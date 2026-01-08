@@ -9,6 +9,7 @@ export const useInfoStore = defineStore('info', {
 		email: '',
 		phone: '',
 
+		oldPassword: '',
 		password: '',
 		passwordConfirm: '',
 
@@ -27,6 +28,8 @@ export const useInfoStore = defineStore('info', {
 		canUpdateInfo(): boolean {
 			return this.isNameValid && this.isEmailValid && this.isPhoneValid
 		},
+
+		isOldPasswordValid: (s): boolean => s.oldPassword.length >= 8,
 
 		isPasswordValid: (s): boolean => s.password.length >= 8,
 
@@ -74,11 +77,15 @@ export const useInfoStore = defineStore('info', {
 			this.loadingPass = true
 			try {
 				const res: any = await updatePasswordApi({
-					password: this.password,
+					oldPassword: this.oldPassword,
+					newPassword: this.password,
 				})
 
-				console.log('res--------------', res)
+				const { refresh_token, access_token } = res
 
+				setTokens(access_token, refresh_token)
+
+				this.oldPassword = ''
 				this.password = ''
 				this.passwordConfirm = ''
 			} finally {

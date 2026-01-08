@@ -16,7 +16,9 @@ const emit = defineEmits<{
 
 <template>
 	<div class="mb-2 flex w-full flex-col">
-		<label v-if="label" :for="id">{{ label }}</label>
+		<label v-if="label" :for="id" class="mb-1 text-xs text-black">{{
+			label
+		}}</label>
 
 		<input
 			:id="id"
@@ -24,7 +26,7 @@ const emit = defineEmits<{
 			:value="modelValue"
 			:placeholder="placeholder"
 			:required="required"
-			class="w-full rounded border border-black border-opacity-60 bg-white p-3 font-Manrope font-semibold text-black outline-none focus:border-k-main"
+			class="w-full rounded border border-[#CCCC] border-opacity-60 bg-white p-3 font-Manrope font-semibold text-black outline-none focus:border-k-main"
 			@input="
 				emit('update:modelValue', ($event.target as HTMLInputElement).value)
 			"

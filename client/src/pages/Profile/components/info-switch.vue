@@ -17,7 +17,7 @@ const handleLogout = async () => {
 
 <template>
 	<div
-		class="col-span-1 flex h-fit max-h-full w-full flex-col gap-4 rounded bg-white px-4 py-6"
+		class="sticky top-4 col-span-1 flex h-fit max-h-full w-full flex-col gap-4 rounded bg-white px-4 py-6"
 	>
 		<router-link
 			to="/profile"
@@ -35,15 +35,6 @@ const handleLogout = async () => {
 			exact-active-class="nav-link-active"
 		>
 			My Order
-		</router-link>
-
-		<router-link
-			to="/address"
-			class="nav-link"
-			active-class="nav-link-active"
-			exact-active-class="nav-link-active"
-		>
-			My Address
 		</router-link>
 
 		<div class="mt-2 flex w-full items-center justify-center">

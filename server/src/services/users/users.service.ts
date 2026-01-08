@@ -115,6 +115,12 @@ export class UsersService {
       .select('-password');
   }
 
+  async findByIdWithPassword(id: string) {
+    if (!mongoose.Types.ObjectId.isValid(id)) return 'not found user';
+
+    return await this.userModel.findById(id).select('+password');
+  }
+
   async findOneByUsername(userName: string) {
     return await this.userModel.findOne({ email: userName });
   }
@@ -162,6 +168,19 @@ export class UsersService {
       },
     );
   };
+
+  async updatePassword(id: string, hashedPassword: string, user: IUser) {
+    return this.userModel.updateOne(
+      { _id: id },
+      {
+        password: hashedPassword,
+        updatedBy: {
+          _id: new mongoose.Types.ObjectId(user._id),
+          email: user.email,
+        },
+      },
+    );
+  }
 
   findUserBytoken = async (refreshToken: string) => {
     return await this.userModel.findOne({ refreshToken });
