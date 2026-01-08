@@ -10,5 +10,6 @@ import { MongooseModule } from '@nestjs/mongoose';
   ],
   controllers: [RolesController],
   providers: [RolesService],
+  exports: [RolesService], // ⭐ BẮT BUỘC
 })
 export class RolesModule {}

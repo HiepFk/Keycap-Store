@@ -6,6 +6,7 @@ import {
   Body,
   Res,
   Req,
+  Put,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Public, ResponseMessage, User } from '../../decorator/customize';
@@ -14,6 +15,7 @@ import { JwtAuthGuard } from './jwt-auth.guard';
 import type { Request, Response } from 'express';
 import type { IUser } from '../../interface/users.interface';
 import { CreateUserDto } from '../users/dto/create-user.dto';
+import { UpdateUserDto } from '../users/dto/update-user.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -32,6 +34,24 @@ export class AuthController {
   @Get('/profile')
   getProfile(@Req() req) {
     return req.user;
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Put('/profile/upate')
+  @ResponseMessage('Update info success')
+  handleUpdateProfile(
+    @Body() data: UpdateUserDto,
+    @User() user: IUser,
+    @Res({ passthrough: true }) response: Response,
+  ) {
+    return this.authService.updateProfile(data, user, response);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Put('/password/upate')
+  @ResponseMessage('Update password success')
+  handleUpdatePassword(@Body() updateUserDto: UpdateUserDto, @Req() req) {
+    return this.authService.updatePassword(updateUserDto, req.user);
   }
 
   @Public()

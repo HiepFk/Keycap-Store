@@ -2,7 +2,7 @@
 import TextInputField from '../../Checkout/Components/text-input-field.vue'
 import { useInfoStore } from '../../../pinia/infoStore'
 import { useRoute } from 'vue-router'
-import { computed } from 'vue'
+import { computed, watch } from 'vue'
 
 const infoStore = useInfoStore()
 
@@ -10,7 +10,15 @@ const route = useRoute()
 
 const profile = computed(() => route.meta.profile)
 
-console.log('profile------------', profile.value)
+watch(
+	profile,
+	(val) => {
+		if (val) {
+			infoStore.setValueProfie(val)
+		}
+	},
+	{ immediate: true },
+)
 </script>
 
 <template>
@@ -70,7 +78,7 @@ console.log('profile------------', profile.value)
 
 			<button
 				type="button"
-				class="mt-6 w-full cursor-pointer rounded bg-black py-3 font-bold uppercase text-white transition active:translate-y-0.5 disabled:opacity-50"
+				class="mt-6 w-full cursor-pointer rounded bg-[#ffc700] py-3 font-bold uppercase text-white transition active:translate-y-0.5 disabled:bg-black disabled:opacity-40"
 				:disabled="!infoStore.canUpdateInfo || infoStore.loadingInfo"
 				@click="infoStore.updateInfo"
 			>
@@ -115,7 +123,7 @@ console.log('profile------------', profile.value)
 
 			<button
 				type="button"
-				class="mt-6 w-full cursor-pointer rounded bg-black py-3 font-bold uppercase text-white transition active:translate-y-0.5 disabled:opacity-50"
+				class="mt-6 w-full cursor-pointer rounded bg-[#ffc700] py-3 font-bold uppercase text-white transition active:translate-y-0.5 disabled:bg-black disabled:opacity-40"
 				:disabled="!infoStore.canUpdatePassword || infoStore.loadingPass"
 				@click="infoStore.updatePassword"
 			>

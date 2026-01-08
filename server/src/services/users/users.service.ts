@@ -8,13 +8,13 @@ import aqp from 'api-query-params';
 import { User } from '../../decorator/customize';
 import { User as UserM, UserDocument } from './schemas/user.schemas';
 import type { IUser } from 'src/interface/users.interface';
-import { RoleDocument } from '../roles/schemas/role.schemas';
+import { RolesService } from '../roles/roles.service';
 
 @Injectable()
 export class UsersService {
   constructor(
+    private rolesService: RolesService,
     @InjectModel(UserM.name) private userModel: Model<UserDocument>,
-    @InjectModel(UserM.name) private roleModel: Model<RoleDocument>,
   ) {}
 
   getHasPassword = (pass: string) => {
@@ -56,16 +56,16 @@ export class UsersService {
     }
 
     createUserDto.password = this.getHasPassword(createUserDto.password);
-    let roleUser: any;
+    let roleId: any;
     if (!createUserDto?.role) {
-      roleUser = await this.roleModel.findOne({ name: 'user' });
-      if (!roleUser) {
+      roleId = await this.rolesService.findRoleByName('user');
+      if (!roleId) {
         throw new ConflictException('Not has user role');
       }
     }
     let newUser = await this.userModel.create({
       ...createUserDto,
-      role: roleUser?._id,
+      role: roleId,
     });
     return newUser;
   }
@@ -119,10 +119,12 @@ export class UsersService {
     return await this.userModel.findOne({ email: userName });
   }
 
-  async update(id: string, updateUserDto: UpdateUserDto, @User() user: IUser) {
-    if (!mongoose.Types.ObjectId.isValid(id)) return 'not found user';
+  async update(id: string, updateUserDto: UpdateUserDto, user: IUser) {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return 'not found user';
+    }
 
-    return await this.userModel.updateOne(
+    await this.userModel.updateOne(
       { _id: id },
       {
         ...updateUserDto,
@@ -132,6 +134,8 @@ export class UsersService {
         },
       },
     );
+
+    return this.userModel.findById(id).lean(); // ⭐ trả user mới
   }
 
   async remove(id: string, @User() user: IUser) {

@@ -1,4 +1,6 @@
 import { defineStore } from 'pinia'
+import { updatePasswordApi, updateProfileApi } from '../apis/auth'
+import { setTokens } from '../utils/token'
 
 export const useInfoStore = defineStore('info', {
 	state: () => ({
@@ -7,20 +9,14 @@ export const useInfoStore = defineStore('info', {
 		email: '',
 		phone: '',
 
-		// password
 		password: '',
 		passwordConfirm: '',
 
-		// ui
 		loadingInfo: false,
 		loadingPass: false,
 	}),
 
-	// ======================
-	// VALIDATION GETTERS
-	// ======================
 	getters: {
-		// ---- info ----
 		isNameValid: (s): boolean => s.name.trim().length >= 2,
 
 		isEmailValid: (s): boolean => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s.email),
@@ -32,7 +28,6 @@ export const useInfoStore = defineStore('info', {
 			return this.isNameValid && this.isEmailValid && this.isPhoneValid
 		},
 
-		// ---- password ----
 		isPasswordValid: (s): boolean => s.password.length >= 8,
 
 		isPasswordMatch: (s): boolean => s.password === s.passwordConfirm,
@@ -42,10 +37,14 @@ export const useInfoStore = defineStore('info', {
 		},
 	},
 
-	// ======================
-	// ACTIONS
-	// ======================
 	actions: {
+		setValueProfie(data: any) {
+			const { email, name, phone } = data
+			this.email = email
+			this.name = name
+			this.phone = phone
+		},
+
 		async updateInfo() {
 			if (!this.canUpdateInfo) {
 				throw new Error('Invalid profile information')
@@ -53,12 +52,15 @@ export const useInfoStore = defineStore('info', {
 
 			this.loadingInfo = true
 			try {
-				// CALL API ở đây
-				console.log('Update info', {
-					name: this.name,
+				const res: any = await updateProfileApi({
 					email: this.email,
+					name: this.name,
 					phone: this.phone,
 				})
+
+				const { refresh_token, access_token } = res
+
+				setTokens(access_token, refresh_token)
 			} finally {
 				this.loadingInfo = false
 			}
@@ -71,12 +73,12 @@ export const useInfoStore = defineStore('info', {
 
 			this.loadingPass = true
 			try {
-				// CALL API ở đây
-				console.log('Update password', {
+				const res: any = await updatePasswordApi({
 					password: this.password,
 				})
 
-				// reset form
+				console.log('res--------------', res)
+
 				this.password = ''
 				this.passwordConfirm = ''
 			} finally {

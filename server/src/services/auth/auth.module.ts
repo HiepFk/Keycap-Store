@@ -8,11 +8,13 @@ import { JwtStrategy } from './passport/jwt.strategy';
 import ms from 'ms';
 import { AuthController } from './auth.controllers';
 import { UsersModule } from '../users/users.module';
+import { RolesModule } from '../roles/roles.module';
 @Module({
   providers: [AuthService, LocalStrategy, JwtStrategy],
   imports: [
     UsersModule,
     PassportModule,
+    RolesModule,
 
     JwtModule.registerAsync({
       imports: [ConfigModule],
