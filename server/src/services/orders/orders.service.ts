@@ -1,8 +1,13 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model, SortOrder } from 'mongoose';
+import mongoose, { Model, SortOrder } from 'mongoose';
 import { CreateOrderDto } from './dto/create-order.dto';
-import { Order, OrderDocument } from './schemas/order.schemas';
+import { Order, OrderDocument, OrderStatus } from './schemas/order.schemas';
 import aqp from 'api-query-params';
 
 @Injectable()
@@ -165,5 +170,41 @@ export class OrdersService {
     }
 
     return order.save();
+  }
+
+  async cancle(orderId: string, userId: string, note?: string) {
+    const order = await this.orderModel.findOne({
+      orderCode: orderId,
+      isDeleted: false,
+    });
+
+    if (!order) {
+      throw new NotFoundException('Order not found');
+    }
+
+    if (order.createdBy.toString() !== userId) {
+      throw new ForbiddenException('You are not allowed to cancel this order');
+    }
+
+    if (![OrderStatus.PENDING, OrderStatus.CONFIRMED].includes(order.status)) {
+      throw new BadRequestException(
+        `Cannot cancel order when status is "${order.status}"`,
+      );
+    }
+
+    order.status = OrderStatus.CANCELLED;
+    order.deletedAt = new Date();
+    order.deletedBy = new mongoose.Types.ObjectId(userId);
+
+    if (note) {
+      order.note = note;
+    }
+
+    order.statusHistory.push({
+      status: OrderStatus.CANCELLED,
+      at: new Date(),
+    });
+
+    return await order.save();
   }
 }

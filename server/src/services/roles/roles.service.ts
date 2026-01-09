@@ -28,7 +28,7 @@ export class RolesService {
   }
 
   async findRoleByName(name: string) {
-    const role: any = this.roleModel.findOne({ name });
+    const role: any = await this.roleModel.findOne({ name });
     if (!role) {
       throw new ConflictException('Not has user role');
     }

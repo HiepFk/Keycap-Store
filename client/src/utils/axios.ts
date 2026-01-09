@@ -90,6 +90,10 @@ api.interceptors.response.use(
 				return retryRes.data?.data ?? retryRes.data
 			} catch (err) {
 				processQueue(err, null)
+
+				console.log('err-------------------', err)
+				return
+
 				clearTokens()
 				window.location.href = '/login'
 				return Promise.reject(err)

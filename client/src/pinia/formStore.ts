@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { useCartStore } from './cartStore'
+import { createOrder } from '../apis/order'
 
 export const useFormStore = defineStore('form', {
 	state: () => ({
@@ -27,8 +28,7 @@ export const useFormStore = defineStore('form', {
 		isEmailValid: (s): boolean => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s.email),
 
 		isPhoneValid: (s): boolean =>
-			s.phone === '' ||
-			(/^(\+84|0)\d{9}$/.test(s.phone) && s.phone.trim().length > 0),
+			s.phone.trim().length === '' || /^(\+84|0)\d{9}$/.test(s.phone),
 
 		isCityValid: (s): boolean => s.city.trim().length > 0,
 
@@ -42,18 +42,11 @@ export const useFormStore = defineStore('form', {
 		bannerOff() {
 			this.bannerState = 'hide'
 		},
-		setCash(e: Event) {
-			e.preventDefault()
-			this.payment = 'cash'
-		},
-		setElectronic(e: Event) {
-			e.preventDefault()
-			this.payment = 'electronic'
-		},
+
 		setTypePayment(type: string) {
 			this.payment = type
 		},
-		submit() {
+		async submit() {
 			const cartStore = useCartStore()
 
 			if (cartStore.isEmpty) {
@@ -72,31 +65,34 @@ export const useFormStore = defineStore('form', {
 				return
 			}
 
-			// 🔥 CONVERT CART OBJECT → ARRAY
-			const items = Object.values(cartStore.cart).map((item: any) => ({
+			const products = Object.values(cartStore.cart).map((item: any) => ({
 				productId: item.product._id,
-				name: item.product.header,
-				price: item.product.price,
 				quantity: item.amount,
-				total: item.product.price * item.amount,
+				totalPrice: item.product.price * item.amount,
 			}))
 
 			const payload = {
-				customer: {
-					name: this.name,
-					email: this.email,
-					phone: this.phone,
-					address: this.address,
-					city: this.city,
-				},
-				payment: this.payment,
-				items,
-				subTotal: cartStore.cartValue,
-				shipping: cartStore.shipping,
-				grandTotal: cartStore.getGrandTotal,
+				products,
+				shippingFee: cartStore.shipping,
+				receiverName: this.name,
+				receiverEmail: this.email,
+				receiverPhone: this.phone,
+				receiverAddress: this.address + ' - ' + this.city,
+				paymentMethod: this.payment,
+				isPaid: false,
+				note: this.comment,
 			}
 
-			console.log(payload)
+			// this.bannerState = 'show'
+
+			try {
+				await createOrder(payload)
+				// this.bannerState = 'show'
+			} catch (error) {
+				console.log('error-----', error)
+			} finally {
+				this.showErrors = false
+			}
 		},
 	},
 })

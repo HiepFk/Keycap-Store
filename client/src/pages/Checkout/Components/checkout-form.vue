@@ -26,7 +26,9 @@ const handleChosseTypePayment = (e: Event, type: string) => {
 					required
 					v-model="formStore.name"
 					:error-message="
-						formStore.name && !formStore.isNameValid ? 'Name is required' : ''
+						formStore.showErrors && !formStore.isNameValid
+							? 'Name is required'
+							: ''
 					"
 				/>
 
@@ -39,7 +41,7 @@ const handleChosseTypePayment = (e: Event, type: string) => {
 					autocomplete="off"
 					v-model="formStore.email"
 					:error-message="
-						formStore.email && !formStore.isEmailValid
+						formStore.showErrors && !formStore.isEmailValid
 							? 'Must be a valid email address.'
 							: ''
 					"
@@ -54,7 +56,7 @@ const handleChosseTypePayment = (e: Event, type: string) => {
 					autocomplete="off"
 					v-model="formStore.phone"
 					:error-message="
-						formStore.phone && !formStore.isPhoneValid
+						formStore.showErrors && !formStore.isPhoneValid
 							? 'Must be a valid phone.'
 							: ''
 					"
@@ -76,7 +78,9 @@ const handleChosseTypePayment = (e: Event, type: string) => {
 					required
 					v-model="formStore.city"
 					:error-message="
-						formStore.city && !formStore.isCityValid ? 'City is required' : ''
+						formStore.showErrors && !formStore.isCityValid
+							? 'City is required'
+							: ''
 					"
 				/>
 
@@ -90,7 +94,7 @@ const handleChosseTypePayment = (e: Event, type: string) => {
 					container-class="col-span-2"
 					v-model="formStore.address"
 					:error-message="
-						formStore.address && !formStore.isAddressValid
+						formStore.showErrors && !formStore.isAddressValid
 							? 'Address is required'
 							: ''
 					"

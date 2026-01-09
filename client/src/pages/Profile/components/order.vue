@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { ref, watch } from 'vue'
+import { cancleOrder, getOrderById } from '../../../apis/order'
 import { PaymentMethod } from '../../../data/order-types'
 import { PAYMENT_METHOD_CONFIG } from '../../../utils/constants'
 import { formatDate } from '../../../utils/utilities'
@@ -9,7 +11,22 @@ const props = defineProps<{
 	order: any
 }>()
 
-console.log('order--------------', props.order)
+const order = ref(props.order)
+
+const handleCancleOrder = async () => {
+	try {
+		await cancleOrder(props?.order?.orderCode)
+		order.value = await getOrderById(props.order.orderCode)
+	} catch (error) {}
+}
+
+watch(
+	() => props.order,
+	(newOrder) => {
+		order.value = newOrder
+	},
+	{ immediate: true },
+)
 </script>
 
 <template>
@@ -117,6 +134,7 @@ console.log('order--------------', props.order)
 			<div
 				class="cursor-pointer rounded bg-red-500 px-2 py-1 font-semibold text-white"
 				v-if="order.status === 'pending'"
+				@click="handleCancleOrder"
 			>
 				Cancel
 			</div>

@@ -73,6 +73,9 @@ export class Order {
   @Prop({ required: true })
   receiverPhone: string;
 
+  @Prop()
+  receiverEmail?: string;
+
   @Prop({ required: true })
   receiverAddress: string;
 

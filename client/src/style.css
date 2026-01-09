@@ -84,3 +84,10 @@ button {
 	outline: none !important;
 	border-color: transparent !important;
 }
+
+input {
+	appearance: menulist-button;
+	background-image: none !important;
+	background-color: white !important;
+	color: black !important;
+}

@@ -6,3 +6,5 @@ export const getOrderById = (id: string) => api.get(`/orders/${id}`)
 export const updateOrder = (id: string, data: any) =>
 	api.put(`/orders/${id}`, data)
 export const deleteOrder = (id: string) => api.delete(`/orders/${id}`)
+
+export const cancleOrder = (id: string) => api.post(`/orders/cancle/${id}`)
