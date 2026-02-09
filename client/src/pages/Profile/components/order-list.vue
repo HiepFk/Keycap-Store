@@ -15,7 +15,7 @@ const fetchOrders = async () => {
 	try {
 		loading.value = true
 		const res = await getOrders()
-		orderList.value = res.data
+		orderList.value = res.data?.reverse()
 	} finally {
 		loading.value = false
 	}
